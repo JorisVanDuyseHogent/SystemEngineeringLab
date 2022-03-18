@@ -1,7 +1,7 @@
 # Documentatie Database server opzetten in virtuele machine en deployment op ubuntu server
 | Documentatie type | Link |
 | ----------- | ----------- |
-| Online markdown documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/DatabaseServer#readme) |
+| Online markdown documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/tree/main/DatabaseServer#readme) |
 | Online pdf documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/DatabaseServer/blob/main/uitvoering.pdf) |
 
 ## Table of Contents
