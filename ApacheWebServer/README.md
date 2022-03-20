@@ -13,13 +13,16 @@
   - [Ubuntu server on Bare-metal](#ubuntu-server-on-bare-metal)
     - [Niewe user aanmaken voor de webserver](#niewe-user-aanmaken-voor-de-webserver)
     - [Installatie Apache Web Server](#installatie-apache-web-server)
-    - [Verwijderen van nginx](#verwijderen-van-nginx)
-    - [Portforwardoing Apache2](#portforwardoing-apache2)
+      - [Verwijderen van nginx](#verwijderen-van-nginx)
+    - [Portforwarding Apache2](#portforwarding-apache2)
     - [Installatie van website voorbeeld](#installatie-van-website-voorbeeld)
     - [Http to Https with SSL](#http-to-https-with-ssl)
-    - [SSL verbinding testen](#ssl-verbinding-testen)
-    - [Eindresultaat](#eindresultaat)
-    - [Extra informatie SSL certificaat](#extra-informatie-ssl-certificaat)
+      - [Self signed SSL](#self-signed-ssl)
+        - [Self Signed SSL verbinding testen](#self-signed-ssl-verbinding-testen)
+        - [Extra informatie SSL certificaat](#extra-informatie-ssl-certificaat)
+    - [SSL Certificaat met letsEncrypt](#ssl-certificaat-met-letsencrypt)
+      - [Installatie Certbot](#installatie-certbot)
+    - [Eind resultaat](#eind-resultaat)
 
 ## Ubuntu desktop in Virtual box
 
@@ -67,7 +70,7 @@ Mar 18 20:41:11 cplex apachectl[9167]: (98)Address already in use: AH00072: make
 Mar 18 20:41:11 cplex apachectl[9167]: (98)Address already in use: AH00072: make_sock: could not bind to address 0.0.0.0:80
 ```
 
-### Verwijderen van nginx
+#### Verwijderen van nginx
 
 ```bash
 lsof -i :80 #see what application is using port 80
@@ -79,7 +82,7 @@ systemctl status apache2
 
 ![Apach2Running](./images/Apach2Running.PNG)
 
-### Portforwardoing Apache2
+### Portforwarding Apache2
 
 Apache2 gebruikt nu poort 80. Dus deze moeten we nu via onze ISP gaan open zetten.
 
@@ -134,6 +137,8 @@ Eens een kijkje nemen naar de pagina die nu online staat!
 ### Http to Https with SSL
 
 Http &#128275; to Https &#128274; with SSL
+
+#### Self signed SSL
 
 ```bash
 $ sudo a2enmod ssl #enable the ssl service if not allready enabled
@@ -204,18 +209,16 @@ Email Address []:jorisduyse@protonmail.com
 ![PortForwarding443](./images/PortForwarding443.PNG)
 *"Aangezien we een https verbinding willen maken en de http willen laten vallen kunnen we poort 80 weer sluiten"*
 
-### SSL verbinding testen
+##### Self Signed SSL verbinding testen
 
 Helaas gaat de browser nogsteeds klagen aangezien de SSL self-sigend is en dus niet "officieel" herkent wordt maar https is wel ingeschakeld.
 
 ![PotentialSecurityRisk](./images/PotentialSecurityRisk.PNG)
 *"Browser klaagt over self-signed site"*
 
-### Eindresultaat
-
 ![FinalResultSelfSignedSSLSite](./images/FinalResultSelfSignedSSLSite.PNG)
 
-### Extra informatie SSL certificaat
+##### Extra informatie SSL certificaat
 
 ![PageSecurityInfo](./images/PageSecurityInfo.PNG)
 *"SSL certificaat informatie"*
@@ -223,3 +226,76 @@ Helaas gaat de browser nogsteeds klagen aangezien de SSL self-sigend is en dus n
 ![SelfSignedCertificate](./images/SelfSignedCertificate.PNG)
 ![SelfSignedCertificateRest](./images/SelfSignedCertificateRest.PNG)
 *"Volledig SSL certificaat"*
+
+### SSL Certificaat met letsEncrypt
+
+#### Installatie Certbot
+
+```bash
+sudo apt-get install certbot python3-certbot-apache -y
+```
+
+```bash
+sudo cerbot --apache
+```
+
+Bij het uitvoeren van dit commando verschijnt er echter een error. Dit komt omdat we de virtual host van poort 80 hadden verwijdert in de config file. Na deze terug te plaatsen werd de error verholpen.
+
+```text
+Unable to find a virtual host listening on port 80 which is currently needed for Certbot to prove to the CA that you control your domain.
+Please add a virtual host for port 80.
+```
+
+```text
+1: No redirect - Make no further changes to the webserver configuration.
+2: Redirect - Make all requests redirect to secure HTTPS access. Choose this for
+new sites, or if you're confident your site works on HTTPS. You can undo this
+change by editing your web server's configuration.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Select the appropriate number [1-2] then [enter] (press 'c' to cancel): 2
+```
+
+De Certbot die in python geschreven is &#128525;! Past de config files aan in /etc/apache2 zodat ze verwijzen naar een zelf gegenereerde file: `Redirecting vhost in /etc/apache2/sites-enabled/default-ssl.conf to ssl vhost in /etc/apache2/sites-enabled/default-ssl.conf`
+Een test van onze SSL vind je [hier](https://www.ssllabs.com/ssltest/analyze.html?d=www.jorisduyse.com).
+
+![LetsEncryptSSLCert](./images/LetsEncryptSSLCert.PNG)
+
+![RSA2048Cert](./images/RSA2048Cert.PNG)
+
+```text
+-----BEGIN CERTIFICATE-----
+MIIFKjCCBBKgAwIBAgISBHlMT9r4arJ9J443rTkyRqlIMA0GCSqGSIb3DQEBCwUAMDIxCzAJBgNV
+BAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQDEwJSMzAeFw0yMjAzMjAxNTIz
+NTVaFw0yMjA2MTgxNTIzNTRaMB0xGzAZBgNVBAMTEnd3dy5qb3Jpc2R1eXNlLmNvbTCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBANq+YW84cOd5ISsDGXvMvVWCOYmsQW59V2E0jP/XIO1E
+H5hDu1L5VkKB0RRp3xq2OCinJza4d5yVldPGiL12MdriFUq2VXbVRScHbeCGFSIwmgwduMy3Gf4F
+9KSqoPMBY2XyXLFxiunAaBJV+8XCQos0nSMdNXG9OtDvcodkTXpGMW96PAP1KX/tu1X0ukcypelL
+r4B6SFQoY9eza1QZw5gBMXTwX2STd462E1ciVFhyt7oQsMQQVisCLLB6edsLaMX7WKKSlG1Emmal
+JT8JU3fAkDwH6sDjDOd/5oHoGTp7XrISeBFLLfef5MrAmqYuAzNOwylwYlrRmXDk/t/pdqUCAwEA
+AaOCAk0wggJJMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIw
+DAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQU6X44VQL6ksUSjz2PEN6fgl+raXEwHwYDVR0jBBgwFoAU
+FC6zF7dYVsuuUAlA5h+vnYsUwsYwVQYIKwYBBQUHAQEESTBHMCEGCCsGAQUFBzABhhVodHRwOi8v
+cjMuby5sZW5jci5vcmcwIgYIKwYBBQUHMAKGFmh0dHA6Ly9yMy5pLmxlbmNyLm9yZy8wHQYDVR0R
+BBYwFIISd3d3LmpvcmlzZHV5c2UuY29tMEwGA1UdIARFMEMwCAYGZ4EMAQIBMDcGCysGAQQBgt8T
+AQEBMCgwJgYIKwYBBQUHAgEWGmh0dHA6Ly9jcHMubGV0c2VuY3J5cHQub3JnMIIBBAYKKwYBBAHW
+eQIEAgSB9QSB8gDwAHYA36Veq2iCTx9sre64X04+WurNohKkal6OOxLAIERcKnMAAAF/qCRz5gAA
+BAMARzBFAiBWQo9bwo/O+0+TIApBYu2w2Jv73ulmmk1Iqd0lbrajhQIhALomLdWDmAOwCy5tS0oZ
+BBs3JfWpm/MHnHCAkhzhEqb0AHYARqVV63X6kSAwtaKJafTzfREsQXS+/Um4havy/HD+bUcAAAF/
+qCR0CwAABAMARzBFAiEAjHQ/vTQhRzABSb+1VrPhNTlh8PKA9tN4WGXVV8w6tncCIGJcH+r6Uxi9
+DQDO1sjJeowwEh47A2bPuKolqaPdls10MA0GCSqGSIb3DQEBCwUAA4IBAQBB+M8LyR/M/8cMG+it
+bLpl+wXao474ot+yCVGCvAvImS7domYwDWCq7VmAX87l/Xip3fa3YwWMpSmRXMaBtClUEdcNfqRl
+bJE4ZJi83xP2WBNpBykG3ueC6s7ARUVNO7Xp8Swst9s12KKhwzlu39WJwSPzb7g2cYhr+o3riCkE
+6QC/fX4ALhs1cqLySd6LT7L7lETAVI3fyC6fsjhlbAhVlJIsTeh+e5OeS/wWInsr7hwemjxP5KDy
+8NW6lsEZ7tA7QGdjcvbfthMomP2Y06XAcdU4M9Qnu6SLJBBwg+0jYPpVGb0a39fcyxis61YHCQ1o
+0MZ54glG1FX6PXAwd5ns
+-----END CERTIFICATE-----
+```
+
+### Eind resultaat
+
+![LestsEncryptCertified1](./images/LestsEncryptCertified1.PNG)
+*"Website met let's encrypt certificaat"*
+
+![LestsEncryptCertified2](./images/LestsEncryptCertified2.PNG)
+
+![LestsEncryptCertified3](./images/LestsEncryptCertified3.PNG)
