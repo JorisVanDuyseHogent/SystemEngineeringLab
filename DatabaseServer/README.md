@@ -3,7 +3,7 @@
 | Documentatie type | Link |
 | ----------- | ----------- |
 | Online markdown documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/tree/main/DatabaseServer#readme) |
-| Online pdf documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/blob/main/DatabaseServer/uitvoering.pdf) |
+| Online pdf documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/blob/main/DatabaseServer/DatabaseServerG56.pdf) |
 
 ## Table of Contents
 
