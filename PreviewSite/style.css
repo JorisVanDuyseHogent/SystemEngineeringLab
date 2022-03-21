@@ -9,3 +9,24 @@ body {
 td {
     color: white;
 }
+
+.btn {
+  background-color: green;
+  border: none;
+  color: white;
+  margin-left: 20%;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.btn:hover {
+  background-color: darkgreen;
+} 
+
+a {
+    color: green;
+}
+
+a:hover {
+    color: darkgreen;
+}
