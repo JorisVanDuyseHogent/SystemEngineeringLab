@@ -3,7 +3,7 @@
 | Documentatie type | Link |
 | ----------- | ----------- |
 | Online markdown documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/tree/main/Fail2Ban#readme) |
-| Online pdf documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/blob/main/Fail2Ban/uitvoering.pdf) |
+| Online pdf documentation | [github.com](https://github.com/JorisVanDuyseHogent/SystemEngineeringLab/blob/main/Fail2Ban/Fail2BanG56.pdf) |
 
 ## Table of contents
 
