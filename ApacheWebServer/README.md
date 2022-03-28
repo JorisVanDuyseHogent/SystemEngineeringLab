@@ -102,6 +102,8 @@ apache2 11935 www-data    4u  IPv6 131563      0t0  TCP *:http (LISTEN)
 
 ### Installatie van website voorbeeld
 
+Voor een website te publiceren moeten we de HTML bestand in `/var/www/html/` plaatsen.
+
 ```bash
 $ ls
 index.html  index.nginx-debian.html
