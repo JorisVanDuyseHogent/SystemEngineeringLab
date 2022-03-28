@@ -10,6 +10,11 @@
 - [Documentatie Apache Web Server opzetten in virtuele machine en deployment op ubuntu server](#documentatie-apache-web-server-opzetten-in-virtuele-machine-en-deployment-op-ubuntu-server)
   - [Table of Contents](#table-of-contents)
   - [Ubuntu desktop in Virtual box](#ubuntu-desktop-in-virtual-box)
+      - [Website op virtuele machine plaatsen](#website-op-virtuele-machine-plaatsen)
+      - [Open poorten bekijken](#open-poorten-bekijken)
+      - [Config file aanpassen](#config-file-aanpassen)
+      - [Juiste config file instellen](#juiste-config-file-instellen)
+      - [Firewall configuratie](#firewall-configuratie)
   - [Ubuntu server on Bare-metal](#ubuntu-server-on-bare-metal)
     - [Niewe user aanmaken voor de webserver](#niewe-user-aanmaken-voor-de-webserver)
     - [Installatie Apache Web Server](#installatie-apache-web-server)
@@ -22,11 +27,53 @@
         - [Extra informatie SSL certificaat](#extra-informatie-ssl-certificaat)
     - [SSL Certificaat met letsEncrypt](#ssl-certificaat-met-letsencrypt)
       - [Installatie Certbot](#installatie-certbot)
+    - [Auto forward to https from http](#auto-forward-to-https-from-http)
     - [Eind resultaat](#eind-resultaat)
 
 ## Ubuntu desktop in Virtual box
 
-Moet nog worden bijgewerkt
+Hier is een overzicht van de verschillende stappen die genomen werden om een apache2 website online te zetten vanaf een Ubuntu Virtual Machine. 
+Later wordt deze website beveiligd met https.
+Eerst werd apache2 geïnstalleerd. Na het installeren werd er gekeken op welke poort deze luistert met het commando ```sudo ss -tlnp```.
+Er werd vastgesteld dat deze meteen luistert naar alle netwerken en niet enkel naar de loopback-interface. Het adres waarop deze luistert is namelijk *:80. Dit betekent dat apache2 naar alle netwerken luistert.
+De website was meteen raadpleegbaar zowel binnen als buiten de VM.
+
+#### Website op virtuele machine plaatsen
+
+De nieuwe website in de Document Root zetten (met behulp van unzip commando). De website files werden via mail vanaf het fysiek systeem doorgestuurd naar de VM.
+![UnzipLaurensWebsite](images/laurens1.png)
+
+#### Open poorten bekijken
+
+```bash
+sudo ss -tlnp
+```
+![ss-tlnpOutput](images/laurens4.png)
+
+#### Config file aanpassen
+
+![NanoDefault-ssl.conf](images/laurens5.png)
+
+#### Juiste config file instellen
+
+```Bash
+sudo a2ensite default-ssl.conf | sudo a2dissite 000-defaullt.conf
+sudo systemctl reload apache2
+sudo ss -tlnp
+```
+![CorrectConfigFileEnable](images/laurens7.png)
+*"Juiste config file op enable zetten"*
+
+#### Firewall configuratie
+
+```bash
+sudo ufw allow 22 #for SSH connections
+sudo ufw allow 80 #for http connections
+sudo ufw allow 443 #for https connections thru SSL
+sudo ufw allow 3306 #for databse connection
+```
+![FirewallUpdate](images/laurens9.png)
+*"Update van de firewal"*
 
 ## Ubuntu server on Bare-metal
 
@@ -292,6 +339,11 @@ bJE4ZJi83xP2WBNpBykG3ueC6s7ARUVNO7Xp8Swst9s12KKhwzlu39WJwSPzb7g2cYhr+o3riCkE
 0MZ54glG1FX6PXAwd5ns
 -----END CERTIFICATE-----
 ```
+
+### Auto forward to https from http
+
+![AutoForwardToHTTPS](./images/AutoForwardToHTTPS.PNG)
+*"Config file configuration for VirtualHost port 80; forward user to https"*
 
 ### Eind resultaat
 
