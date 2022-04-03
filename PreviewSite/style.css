@@ -1,13 +1,13 @@
 body {
-    color: green;
-    background-color: black;
-    margin-left: 20%;
-    margin-right: 20%;
-    margin-top: 2%;
+  color: green;
+  background-color: black;
+  margin-left: 20%;
+  margin-right: 20%;
+  margin-top: 2%;
 }
 
 td {
-    color: white;
+  color: white;
 }
 
 .btn {
@@ -17,6 +17,10 @@ td {
   margin-left: 20%;
   cursor: pointer;
   font-size: 10px;
+}
+
+h2 {
+  margin-top: 5%;
 }
 
 .btn:hover {
@@ -29,4 +33,14 @@ a {
 
 a:hover {
     color: darkgreen;
+}
+
+.link_button {
+  justify-content: center;
+  background: rgb(44, 48, 52);
+  padding: 5px;
+  color: green;
+  border-radius: 10px;
+  font-weight: 800;
+  margin-bottom: 30px;
 }

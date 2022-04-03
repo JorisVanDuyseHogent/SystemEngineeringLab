@@ -15,7 +15,7 @@ html, body {
 }
 
 body {
-    background-color: gray;
+    background-color: black;
     color:  white;
     display: flex;
     justify-content: center;
@@ -24,7 +24,7 @@ body {
 }
 
 canvas {
-    background-color: black;
+    background-color: rgb(19, 19, 19);
 
 }
 
@@ -40,6 +40,7 @@ canvas {
 }
 
 #ui {
+    color: green;
     display: flex;
     align-items: center;
     font-size: 10px;
@@ -48,6 +49,7 @@ canvas {
 }
 
 #score {
+    color: green;
     margin-top: 20px;
     font-size: 30px;
     font-weight: 800;
@@ -62,9 +64,9 @@ canvas {
 #replay {
     font-size: 10px;
     padding: 10px;
-    background: black;
+    background: rgb(44, 48, 52);
     border: none;
-    color: darkgray;
+    color: green;
     border-radius: 20px;
     font-weight: 800;
     transform: rotate(270deg);
@@ -72,9 +74,24 @@ canvas {
     transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#replay:hover {
-    background: red;
-    background: rebeccapurple;
+#back {
+    font-size: 10px;
+    padding: 10px;
+    background: rgb(44, 48, 52);
+    border: none;
+    color: green;
+    border-radius: 20px;
+    font-weight: 800;
+    transform: rotate(0deg);
+    cursor: pointer;
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+}
+
+#replay:hover, #back:hover {
+    background: green;
+    transform: scale(1.25);
+    color: black;
     transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -104,21 +121,21 @@ canvas {
 }
 
 #company {
+    color: green;
     width: 100%;
     bottom: 40px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     font-weight: 600;
-    color: inherit;
     text-transform: uppercase;
     padding-left: 35px;
 }
 
 #company span {
+    color: green;
     font-size: 10px;
     margin-left: 20px;
-    color: inherit;
     letter-spacing: 4px;
 }
 
@@ -131,7 +148,14 @@ canvas {
     flex-flow: row wrap;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.options {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
 
