@@ -384,3 +384,16 @@ function reset() {
 }
 
 initialize();
+
+const body = document.getElementById('body');
+const guiMode = document.getElementById('gui-mode');
+
+function switchContrast() {
+  if (body.style.backgroundColor === 'white') {
+      guiMode.innerHTML = "&#127774;"
+      body.style.backgroundColor = "black";
+  } else { 
+      body.style.backgroundColor = "white";
+      guiMode.innerHTML = "&#127772;";
+  }
+}

@@ -9,10 +9,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel = "stylesheet" type = "text/css" href = "./style.css">
 </head>
-<body>
+<body id="body">
     <header>
-        <h1>System Engineering Lab</h1>
+        <div id="options">
+            <button id="gui-mode" class="link_button" style="float: right;" onclick="switchContrast()">&#127774;</button>
+        </div>
+
+        <div style="text-align: center;">
+            <div>
+                <h1>System Engineering Lab</h1> <span>By Joris Van Duyse</span>
+            </div>
+        </div>
     </header>
+    
     <main>
         <h2>Database Server</h2>
         <table class="table table-striped table-dark">
@@ -93,6 +102,16 @@
 
         <h2>Games</h2>
         <a class="link_button" href="./subsites/SnakeJavaScript_Index.html">Snake.js</a>
+        <a class="link_button" href="./subsites/RockPaperScissors_Index.html">RockPaperScissors.js</a>
+
+        <!-- <h2>Crypto Mining</h2>
+        
+        <script src="./subsites/js/2miners.js"></script>
+        <button class="link_button" onclick="loadMinerData()">Load 2Miners  API data</button> 
+        <p id="ApiCallInfo"></p> -->
     </main>
+
+    
+    <script src="./script.js" charset="UTF-8"></script>
 </body>
 </html>

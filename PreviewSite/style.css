@@ -28,11 +28,11 @@ h2 {
 } 
 
 a {
-    color: green;
+  color: green;
 }
 
 a:hover {
-    color: darkgreen;
+  color: darkgreen;
 }
 
 .link_button {
@@ -43,4 +43,8 @@ a:hover {
   border-radius: 10px;
   font-weight: 800;
   margin-bottom: 30px;
+}
+
+header .link_button:hover {
+  background: white;
 }

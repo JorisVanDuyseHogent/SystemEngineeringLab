@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./SnakeJavaScript_Style.css">
     <title>Snake Game with JavaScript</title>
 </head>
-<body>
+<body id="body">
     <div class="container-noselect">
         <div class="options">
             <a id="back" href="../index.html">BACK</a>
@@ -24,7 +24,9 @@
             </div>
             <div id="company">
                 <div>
-                    <h1>SNAKE</h1> <span>By Joris Van Duyse</span>
+                    <h1>SNAKE</h1> 
+                    <span><button id="gui-mode" class="link_button" style="float: right;" onclick="switchContrast()">&#127774;</button></span>
+                    <span>By Joris Van Duyse</span> 
                 </div>
                 <div>
                     <span>based on video from Bek Brace</span>
@@ -34,6 +36,6 @@
         </div>
     </div>
 
-    <script src="./SnakeJavaScript_game.js"></script>
+    <script src="./js/SnakeJavaScript_game.js"></script>
 </body>
 </html>

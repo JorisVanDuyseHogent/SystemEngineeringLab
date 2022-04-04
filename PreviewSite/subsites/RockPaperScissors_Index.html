@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./Games_Style.css">
+    <title>Paper Rock Scissors</title>
+</head>
+<body id="body">
+    <header>
+        <div id="options">
+            <a id="back" class="link_button" href="../index.html" style="float: left;">Terug</a>
+            <button id="gui-mode" class="link_button" style="float: right;" onclick="switchContrast(); changeFunMode()">&#127774;</button>
+        </div>
+
+        <div style="text-align: center;">
+            <div>
+                <h1>Paper Rock Scissors</h1> <span>By Joris Van Duyse</span>
+            </div>
+            <div>
+                <span>based on video from FreeCodeCamp with Ania Kubów</span>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div id="game-true">
+            <h2>Computer Choice: <span id="computer-choice"></span></h2>
+            <h2>User choice: <span id="user-choice"></span></h2>
+            <h2>Result: <span id="result"></span></h2>
+            <h2>Score: <span id="score">0</span></h2>
+            <div id="buttons">
+                <button id="0" class="game_button">ROCK</button>
+                <button id="1" class="game_button">PAPER</button>
+                <button id="2" class="game_button">SCISSORS</button>
+            </div>
+            <button id="stop" onclick="stop()" class="game_button">STOP</button>
+        </div>
+        <div id="game-false">
+            <h2>Highscore: <span id="highscore">0</span></h2>
+            <button onclick="start()" class="game_button">START</button>
+        </div>
+    </main>        
+        
+
+
+    <script src="./js/RockPaperScissors.js" charset="UTF-8"></script>
+</body>
+</html>

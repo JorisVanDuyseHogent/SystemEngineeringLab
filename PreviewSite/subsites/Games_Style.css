@@ -1,0 +1,58 @@
+body {
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 2%;
+    text-align: left;
+    background-color: black;
+    color: green;
+    font-family: sans-serif;
+    text-transform: uppercase;
+}
+
+.game_button {
+    background: rgb(44, 48, 52);
+    color: green;
+    font-weight: 800;
+    padding: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    
+}
+
+#game-true, #game-false {
+    background: rgb(44, 48, 52);
+    margin-top: 5%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding: 5%;
+}
+
+#buttons {
+    text-align: center;
+}
+
+#game-false {
+    text-align: center;
+}
+
+.link_button {
+    justify-content: center;
+    background: rgb(44, 48, 52);
+    padding: 5px;
+    color: green;
+    border-radius: 10px;
+    font-weight: 800;
+    margin-bottom: 30px;
+}
+
+.options {
+    display:inline-block;
+}
+
+.gui-mode {
+    float: right;
+}
+
+#stop {
+    margin-top: 10px;
+}
