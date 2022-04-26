@@ -97,3 +97,7 @@ sudo iptables -n -L #list of banned ip adresses
 ```
 
 ![IptablesCommand](./images/IptablesCommand.PNG)
+
+Een ip unbannen: ```fail2ban-client set YOURJAILNAMEHERE unbanip IPADDRESSHERE```
+Alternatieve banlist opvragen: ```sudo fail2ban-client status sshd```
+Ignored ips opvragen: ```sudo fail2ban-cient get sshd ignoreip```
