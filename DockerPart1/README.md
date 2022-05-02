@@ -1,4 +1,31 @@
-# Docker 
+# Docker part 1: Installing vaultwarden and portainer
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Docker part 1: Installing vaultwarden and portainer](#docker-part-1-installing-vaultwarden-and-portainer)
+  - [docker-compose.yml file](#docker-composeyml-file)
+  - [HowTo's](#howtos)
+  - [Installing docker on Ubuntu Server LTS 20.04](#installing-docker-on-ubuntu-server-lts-2004)
+  - [User and group settings](#user-and-group-settings)
+  - [Installing vaultwarden](#installing-vaultwarden)
+  - [Installing Portainer](#installing-portainer)
+  - [Containers](#containers)
+  - [Installing Compose](#installing-compose)
+  - [Use docker-compose.yml to create vaultwarden and portainer container](#use-docker-composeyml-to-create-vaultwarden-and-portainer-container)
+  - [Using caddy for vaultwarden SSL proxy](#using-caddy-for-vaultwarden-ssl-proxy)
+    - [Installing caddy](#installing-caddy)
+    - [Configuring caddy](#configuring-caddy)
+  - [Result caddy](#result-caddy)
+  - [Todo's](#todos)
+  - [Evaluatie](#evaluatie)
+
+<!-- /code_chunk_output -->
+
+## docker-compose.yml file
+
+Het docker-compose.yml bestand bewaart alle informatie over een container. 
 
 ## HowTo's
 
@@ -12,7 +39,7 @@ docker [start / stop] [container_name] #start / stop specific   docker container
 
 ```bash
 sudo apt upgrade -y # update befor installing anything
-sudo apt-get remove docker docker-engine docker.io containerd runc #uninstall previous docker version / files
+sudo apt-get remove docker-ce docker-ce-cli containerd.io #uninstall previous docker version / files
 ```
 
 ```bash
@@ -27,11 +54,7 @@ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add 
 
 ```bash
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
-```
-
-```bash
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" #add docker repository
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 ```
 
 ## User and group settings
@@ -48,20 +71,95 @@ This message shows that your installation appears to be working correctly.
 
 [On Debian and Ubuntu, the Docker service is configured to start on boot by default.](https://docs.docker.com/engine/install/linux-postinstall/#configure-docker-to-start-on-boot)
 
-## Installing vaultWarden
+## Installing vaultwarden
 
 ```bash 
 docker pull vaultwarden/server:latest
-sudo docker run -d --name vaultwarden -v /srv/vaultwarden:/data -e WEBSOCKET_ENABLED=true -p 127.0.0.1:8080:80 -p 127.0.0.1:3012:3012 --restart on-failure vaultwarden/server:latest
+sudo docker run -d --name vaultwarden -v /srv/vaultwarden:/data -e WEBSOCKET_ENABLED=true -p 127.0.0.1:8080:8080 -p 127.0.0.1:3012:3012 --restart on-failure vaultwarden/server:latest
 ```
 
-~~## Installing caddy for reversed proxy~~ FAILED
+## Installing Portainer
 
 ```bash
+docker volume create files-portainer
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=alway
+s -v /var/run/docker.sock -v files-portainer:/data portainer/portainer-ce:2.11.1
+```
+
+![](./images/Portainer.PNG)
+
+## Containers
+
+![containers](./images/containers.png)
+
+## Installing Compose
+
+```bash
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+```
+
+```bash
+qwertic@cplex:~$  docker compose version
+Docker Compose version v2.4.1
+```
+
+## Use docker-compose.yml to create vaultwarden and portainer container
+
+[Creating multiple services at once with docker-compose.yml](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/multi-container-microservice-net-applications/multi-container-applications-docker-compose)
+
+```text
+version: '3'
+services:
+    vaultwarden:
+        image: vaultwarden/server:latest
+        container_name: vaultwarden
+        restart: always
+        environment:
+            SIGNUPS_ALLOWED: 'true'
+            WEBSOCKET_ENABLED: 'true'
+        ports:
+            - 8080:8080
+            - 3012:3012
+        volumes:
+            - /srv/vaultwarden:/data
+
+    portainer:
+        image: portainer/portainer-ce:2.11.1
+        container_name: portainer
+        restart: always
+        ports:
+            - 8000:8000
+            - 9443:9443
+        volumes:
+            - /var/run/docker.sock
+            - /files-portainer:/data
+```
+
+```bash
+qwertic@cplex:~$ docker compose up -d
+[+] Running 2/2
+ ⠿ Container portainer    Started                                   2.1s
+ ⠿ Container vaultwarden  Running                                   0.0s
+```
+
+```bash
+qwertic@cplex:~$ docker ps
+CONTAINER ID   IMAGE                           COMMAND                  CREATED              STATUS                    PORTS                                                                                            NAMES
+2f5065e8c337   portainer/portainer-ce:2.11.1   "/portainer"             About a minute ago   Up About a minute         0.0.0.0:8000->8000/tcp, :::8000->8000/tcp, 0.0.0.0:9443->9443/tcp, :::9443->9443/tcp, 9000/tcp   portainer
+04fe3c9060e6   vaultwarden/server:latest       "/usr/bin/dumb-init …"   17 minutes ago       Up 17 minutes (healthy)   0.0.0.0:3012->3012/tcp, :::3012->3012/tcp, 80/tcp, 0.0.0.0:8080->8080/tcp, :::8080->8080/tcp     vaultwarden
+```
+
+## Using caddy for vaultwarden SSL proxy
+
+### Installing caddy
+
+```bash 
 sudo docker pull caddy:2
 ```
 
-The caddy config file located at ```/etc/caddy/```
+### Configuring caddy
 
 ```text
 jorisduyse.com {
@@ -74,53 +172,22 @@ jorisduyse.com {
   reverse_proxy /notifications/hub 0.0.0.0:3012
 
   # Send all other traffic to the regular Vaultwarden endpoint
-  reverse_proxy 0.0.0.0:80
+  reverse_proxy 0.0.0.0:8080
 }
 ```
 
-Create Docker container for caddy with config file from ```/etc/caddy/```
+## Result caddy
+
+De caddy proxy om vaultwarden over ssl te krijgen geeft helaas een lege pagina.
+
+![failed](./images/caddyFailed.PNG)
+
+## Evaluatie
 
 ```bash
-docker run -d -p 80:80 -p 443:443 --name caddy -v /etc/caddy/Caddyfile:/etc/caddy/Caddyfile -v /etc/caddy:/root/.local/share/caddy --restart on-failure caddy:2
-```
-
-```bash
-qwertic@cplex:~$ sudo docker logs caddy
-{"level":"info","ts":1650816039.9069374,"msg":"using provided configuration","config_file":"/etc/caddy/Caddyfile","config_adapter":"caddyfile"}
-{"level":"warn","ts":1650816039.9078312,"msg":"input is not formatted with 'caddy fmt'","adapter":"caddyfile","file":"/etc/caddy/Caddyfile","line":2}
-{"level":"info","ts":1650816039.9092925,"logger":"admin","msg":"admin endpoint started","address":"tcp/localhost:2019","enforce_origin":false,"origins":["localhost:2019","[::1]:2019","127.0.0.1:2019"]}
-{"level":"info","ts":1650816039.9094636,"logger":"http","msg":"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS","server_name":"srv0","https_port":443}
-{"level":"info","ts":1650816039.9094784,"logger":"http","msg":"enabling automatic HTTP->HTTPS redirects","server_name":"srv0"}
-{"level":"info","ts":1650816039.909538,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc000454150"}
-{"level":"info","ts":1650816039.909935,"logger":"tls","msg":"cleaning storage unit","description":"FileStorage:/data/caddy"}
-{"level":"info","ts":1650816039.9099705,"logger":"tls","msg":"finished cleaning storage units"}
-{"level":"info","ts":1650816039.909989,"logger":"http","msg":"enabling automatic TLS certificate management","domains":["jorisduyse.com"]}
-{"level":"info","ts":1650816039.9101381,"msg":"autosaved config (load with --resume flag)","file":"/config/caddy/autosave.json"}
-{"level":"info","ts":1650816039.9101484,"msg":"serving initial configuration"}
-{"level":"info","ts":1650816039.9104495,"logger":"tls.obtain","msg":"acquiring lock","identifier":"jorisduyse.com"}
-{"level":"info","ts":1650816039.9669387,"logger":"tls.obtain","msg":"lock acquired","identifier":"jorisduyse.com"}
-{"level":"info","ts":1650816040.7908595,"logger":"tls.issuance.acme","msg":"waiting on internal rate limiter","identifiers":["jorisduyse.com"],"ca":"https://acme-v02.api.letsencrypt.org/directory","account":""}
-{"level":"info","ts":1650816040.7908974,"logger":"tls.issuance.acme","msg":"done waiting on internal rate limiter","identifiers":["jorisduyse.com"],"ca":"https://acme-v02.api.letsencrypt.org/directory","account":""}
-{"level":"info","ts":1650816041.1320386,"logger":"tls.issuance.acme.acme_client","msg":"trying to solve challenge","identifier":"jorisduyse.com","challenge_type":"tls-alpn-01","ca":"https://acme-v02.api.letsencrypt.org/directory"}
-{"level":"info","ts":1650816041.473747,"logger":"tls","msg":"served key authentication certificate","server_name":"jorisduyse.com","challenge":"tls-alpn-01","remote":"3.70.226.171:13670","distributed":false}
-{"level":"info","ts":1650816041.5367959,"logger":"tls","msg":"served key authentication certificate","server_name":"jorisduyse.com","challenge":"tls-alpn-01","remote":"3.21.43.5:26532","distributed":false}
-{"level":"info","ts":1650816041.564102,"logger":"tls","msg":"served key authentication certificate","server_name":"jorisduyse.com","challenge":"tls-alpn-01","remote":"54.201.106.94:64372","distributed":false}
-{"level":"info","ts":1650816041.627727,"logger":"tls","msg":"served key authentication certificate","server_name":"jorisduyse.com","challenge":"tls-alpn-01","remote":"66.133.109.36:24614","distributed":false}
-```
-
-## Installing Portainer
-
-```bash
-docker volume create portainer_data
-docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:2.11.1 # 
-```
-
-![](./images/Portainer.PNG)
-
-## Installing Compose
-
-```bash
-DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
-mkdir -p $DOCKER_CONFIG/cli-plugins
-curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+docker --version #not with sudo because user should be in docker group
+docker compose version #also not sudo!
+docker ps #show info about docker containers
+docker compose -d #start all services from docker-compose.yml file
+docker compose -d [serviceName] #start specific service from docker-compose.yml file
 ```
